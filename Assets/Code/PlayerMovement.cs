@@ -6,16 +6,15 @@ using System.Linq;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Player")]
-    public float rotationSpeed;
-    public float maxSpeed;
+    public float rotationSpeed, maxSpeed, tpDistance;
     public Rigidbody rb;
-    public GameObject groundChecker;
+    public GameObject groundChecker, bulletLocation;
     public LayerMask groundLayer;
     bool isOnGround;
 
     [Header("Stats")]
-    public float currentBulletTimer, maxBulletTimer, timeSlow, jumpForce, walkSpeed, runSpeed, fireRate;
-    public int bulletMag;
+    public float currentBulletTimer,maxBulletTimer,timeSlow,jumpForce,walkSpeed,runSpeed,fireRate, maxFireRate, reloadTime;
+    public int bulletMag, maxMag;
 
     [Header("TP System")]
     public GameObject[] teleports;
@@ -24,9 +23,11 @@ public class PlayerMovement : MonoBehaviour
     public int roomTP, maxRooms, lootRarity, roomsCleared;
 
     public Transform LootEntrance;
+    public GameObject bullet;
     // Start is called before the first frame update
     void Start()
     {
+        bulletMag = maxMag;
         teleports = GameObject.FindGameObjectsWithTag("Room Spawn");
         maxRooms += (teleports).Count();
     }
@@ -75,8 +76,22 @@ public class PlayerMovement : MonoBehaviour
         {
             maxSpeed = walkSpeed;
         }
+        if (Input.GetMouseButtonDown(0) && fireRate <= 0)
+        {
+            Gun();
+            if( bulletMag == 0)
+            {
+                fireRate = reloadTime;
+            }
+        }
+        if (bulletMag < maxMag && fireRate >= 0) 
+        {
+            fireRate -= Time.deltaTime;
+        }
+        if (fireRate <= 0 && bulletMag <= 0) { bulletMag = maxMag; }
+
     }
-    
+
     private void BulletTime()
     {
        
@@ -94,13 +109,18 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.tag == "Room Door")
         {
             roomTP = Random.Range(0, maxRooms);
-            transform.position = teleports[roomTP].transform.position;
+            transform.position = teleports[roomTP].transform.position + teleports[roomTP].transform.up * tpDistance;
         }
     }
 
     private void Gun()
     {
-
+        if(bulletMag >= 0 && fireRate <= 0)
+        {
+            Instantiate(bullet, (transform.position + transform.forward), transform.rotation);
+            bulletMag--;
+            fireRate = maxFireRate;
+        }
         //for bullet system, have a bullet mag, instantiate when clicked, bullet count limits amount spawned, 
     }
 

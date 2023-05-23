@@ -7,6 +7,7 @@ TagManager:
   - Loot Door
   - Room Door
   - Room Spawn
+  - Bullet
   layers:
   - Default
   - TransparentFX
