@@ -13,8 +13,8 @@ public class PlayerMovement : MonoBehaviour
     bool isOnGround;
 
     [Header("Stats")]
-    public float currentBulletTimer,maxBulletTimer,timeSlow,jumpForce,walkSpeed,runSpeed,fireRate, maxFireRate, reloadTime;
-    public int bulletMag, maxMag;
+    public float currentBulletTimer, maxBulletTimer, timeSlow, jumpForce, walkSpeed, runSpeed, fireRate, maxFireRate, reloadTime, bulletSpeed;
+    public int bulletMag, maxMag, maxRicochet, burstAmt, maxBurst;
 
     [Header("TP System")]
     public GameObject[] teleports;
@@ -69,6 +69,7 @@ public class PlayerMovement : MonoBehaviour
             currentBulletTimer = 0;
             Time.timeScale = 1;
         }
+
         if (Input.GetKey(KeyCode.LeftShift)) 
         {
             maxSpeed = runSpeed;
@@ -76,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
         {
             maxSpeed = walkSpeed;
         }
+
         if (Input.GetMouseButtonDown(0) && fireRate <= 0)
         {
             Gun();
@@ -117,11 +119,24 @@ public class PlayerMovement : MonoBehaviour
     {
         if(bulletMag >= 0 && fireRate <= 0)
         {
-            Instantiate(bullet, (transform.position + transform.forward), transform.rotation);
+            if(maxBurst == 1)
+            {
+                Instantiate(bullet, (transform.position + transform.forward), transform.rotation);
+            } else if (maxBurst > 1)
+            {
+                StartCoroutine("Burst");
+            }
             bulletMag--;
-            fireRate = maxFireRate;
+            if(burstAmt >= maxBurst) { fireRate = maxFireRate; }
         }
-        //for bullet system, have a bullet mag, instantiate when clicked, bullet count limits amount spawned, 
+    }
+    IEnumerator Burst()
+    {
+        for (burstAmt = 0; burstAmt < maxBurst; burstAmt++)
+        {
+            Instantiate(bullet, (transform.position + transform.forward), transform.rotation);
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 
 }
