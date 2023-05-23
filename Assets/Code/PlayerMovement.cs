@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -13,28 +14,21 @@ public class PlayerMovement : MonoBehaviour
     bool isOnGround;
 
     [Header("Stats")]
-    public float currentBulletTimer;
-    public float maxBulletTimer;
-    public float timeSlow;
-    public float jumpForce;
-    public float walkSpeed;
-    public float runSpeed;
+    public float currentBulletTimer, maxBulletTimer, timeSlow, jumpForce, walkSpeed, runSpeed, fireRate;
+    public int bulletMag;
 
     [Header("TP System")]
     public GameObject[] teleports;
 
     [Header("Randomisers")]
-    public int roomTP;
-    public int maxRooms;
-    public int lootRarity;
+    public int roomTP, maxRooms, lootRarity, roomsCleared;
 
     public Transform LootEntrance;
     // Start is called before the first frame update
     void Start()
     {
         teleports = GameObject.FindGameObjectsWithTag("Room Spawn");
-
-        foreach (var teleport in teleports) { maxRooms++; }
+        maxRooms += (teleports).Count();
     }
 
     // Update is called once per frame
@@ -95,6 +89,7 @@ public class PlayerMovement : MonoBehaviour
         if(collision.gameObject.tag == "Loot Door")
         {
             transform.position = LootEntrance.position;
+            roomsCleared++;
         }
         if (collision.gameObject.tag == "Room Door")
         {
@@ -102,4 +97,11 @@ public class PlayerMovement : MonoBehaviour
             transform.position = teleports[roomTP].transform.position;
         }
     }
+
+    private void Gun()
+    {
+
+        //for bullet system, have a bullet mag, instantiate when clicked, bullet count limits amount spawned, 
+    }
+
 }
