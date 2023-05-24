@@ -11,22 +11,15 @@ public class Bullet : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody>();
-        player = GameObject.FindWithTag("Player");
-        rb.AddRelativeForce(Vector3.forward * player.GetComponent<PlayerMovement>().bulletSpeed, ForceMode.Impulse);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-        
+        rb.AddRelativeForce(Vector3.forward * player.GetComponent<Gun>().bulletSpeed, ForceMode.Impulse);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collisions >= player.GetComponent<PlayerMovement>().maxRicochet) { Destroy(gameObject); }
-        rb.AddRelativeForce(Vector3.forward * (player.GetComponent<PlayerMovement>().bulletSpeed/2), ForceMode.Impulse);
+        if (collisions >= player.GetComponent<Gun>().maxRicochet) { Destroy(gameObject); }
+        rb.AddRelativeForce(Vector3.forward * (player.GetComponent<Gun>().bulletSpeed/2), ForceMode.Impulse);
         collisions++;
     }
 }
