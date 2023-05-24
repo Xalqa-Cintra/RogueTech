@@ -8,13 +8,13 @@ public class PlayerMovement : MonoBehaviour
     [Header("Player")]
     public float rotationSpeed, maxSpeed, tpDistance;
     public Rigidbody rb;
-    public GameObject groundChecker, bulletLocation;
+    public GameObject groundChecker;
     public LayerMask groundLayer;
     bool isOnGround;
 
     [Header("Stats")]
-    public float currentBulletTimer, maxBulletTimer, timeSlow, jumpForce, walkSpeed, runSpeed, fireRate, maxFireRate, reloadTime, bulletSpeed;
-    public int bulletMag, maxMag, maxRicochet, burstAmt, maxBurst;
+    public float currentBulletTimer, maxBulletTimer, timeSlow, jumpForce, walkSpeed, runSpeed;
+    
 
     [Header("TP System")]
     public GameObject[] teleports;
@@ -23,11 +23,11 @@ public class PlayerMovement : MonoBehaviour
     public int roomTP, maxRooms, lootRarity, roomsCleared;
 
     public Transform LootEntrance;
-    public GameObject bullet;
+   
     // Start is called before the first frame update
     void Start()
     {
-        bulletMag = maxMag;
+       
         teleports = GameObject.FindGameObjectsWithTag("Room Spawn");
         maxRooms += (teleports).Count();
     }
@@ -78,19 +78,7 @@ public class PlayerMovement : MonoBehaviour
             maxSpeed = walkSpeed;
         }
 
-        if (Input.GetMouseButtonDown(0) && fireRate <= 0)
-        {
-            Gun();
-            if( bulletMag == 0)
-            {
-                fireRate = reloadTime;
-            }
-        }
-        if (bulletMag < maxMag && fireRate >= 0) 
-        {
-            fireRate -= Time.deltaTime;
-        }
-        if (fireRate <= 0 && bulletMag <= 0) { bulletMag = maxMag; }
+        
 
     }
 
@@ -115,28 +103,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Gun()
-    {
-        if(bulletMag >= 0 && fireRate <= 0)
-        {
-            if(maxBurst == 1)
-            {
-                Instantiate(bullet, (transform.position + transform.forward), transform.rotation);
-            } else if (maxBurst > 1)
-            {
-                StartCoroutine("Burst");
-            }
-            bulletMag--;
-            if(burstAmt >= maxBurst) { fireRate = maxFireRate; }
-        }
-    }
-    IEnumerator Burst()
-    {
-        for (burstAmt = 0; burstAmt < maxBurst; burstAmt++)
-        {
-            Instantiate(bullet, (transform.position + transform.forward), transform.rotation);
-            yield return new WaitForSeconds(0.2f);
-        }
-    }
+    
 
 }
